@@ -45,11 +45,25 @@ class NotesController extends Controller
             $collabarator->note_id=$id;
             $collabarator->save();
             //$collabarator=collabarator::where('id',$id)->update(array('collab_mails'=>$email));
-            return ['success'];
+            return response()->json(['message'=>"Email has been added successfully"]);
         }
     }
    }
 
+   public function removeMailFromCollabarator(Request $request){
+    $id=$request->input('id');
+    $Target_note=Notes::findOrFail($id);
+    $token = JWTAuth::getToken();
+    $id_getter = JWTAuth::getPayload($token)->toArray();   
+    $check_id=$id_getter["sub"];
+    if($Target_note->user_id=$check_id ){
+        // $note=AppNotes::where('id',$id)->update(array('MailColab'=>null));
+        $value_removed=Notes::where('id',$id)->update(array('assignedTo'=>null));
+        //$collabaratorRemoved=collabarator::where('note_id',$id)->delete();
+        return response()->json(['message'=>"Email is removed successfully"]);
+    }
+   }
+   
    public function getNotes(){
     $notes=Notes::all();
     $token = JWTAuth::getToken();

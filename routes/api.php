@@ -24,3 +24,4 @@ Route::post('/login',[UserController::class,'login']);
 Route::post('uploadNote',[NotesController::class,'createNotes']);
 Route::post('/addCollabarator',[NotesController::class,'addCollabarator']);
 Route::get('/getNotes',[NotesController::class,'getNotes']);
+Route::post('/removeMail',[NotesController::class,'removeMailFromCollabarator']);
