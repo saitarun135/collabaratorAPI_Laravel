@@ -26,7 +26,6 @@ it's a feature of Google Keep by playing with that i am developing this collabar
 - can able to remove the mails from the shared content.
 
 ## Contributing
-- saitarun800@gmail.com
-- @git= saitarun135 
+- S.Sai Tarun
 
 
