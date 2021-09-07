@@ -21,11 +21,16 @@ class NotesController extends Controller
        $note->createdBy=$user_mail;
        $note->save();
        $collabMails=new collabarator();
-    //    $collabMails->collab_mails=$user_mail;
+        $mailAssignedTo= $request->input('collab_mails');
+       if($mailAssignedTo != null){
+       $collabMails->collab_mails=$mailAssignedTo;
        $collabMails->note_id=$note->id;
        $collabMails->save();
+       }
        return $note;
    }
+
+
    public function addCollabarator(Request $request){
     $id=$request->input('id');
     $email=$request->input('email');
@@ -52,18 +57,19 @@ class NotesController extends Controller
 
    public function removeMailFromCollabarator(Request $request){
     $id=$request->input('id');
+    $email=$request->input('email');
     $Target_note=Notes::findOrFail($id);
     $token = JWTAuth::getToken();
     $id_getter = JWTAuth::getPayload($token)->toArray();   
     $check_id=$id_getter["sub"];
+
     if($Target_note->user_id=$check_id ){
-        // $note=AppNotes::where('id',$id)->update(array('MailColab'=>null));
         $value_removed=Notes::where('id',$id)->update(array('assignedTo'=>null));
-        //$collabaratorRemoved=collabarator::where('note_id',$id)->delete();
+        $collabaratorRemoved=collabarator::where('note_id',$id)->where('collab_mails',$email)->delete();
         return response()->json(['message'=>"Email is removed successfully"]);
     }
    }
-   
+
    public function getNotes(){
     $notes=Notes::all();
     $token = JWTAuth::getToken();
@@ -71,13 +77,17 @@ class NotesController extends Controller
     $check_id=$id["sub"];
     $Normal_notes=User::find($notes->user_id=$check_id )->noteses;
     $email=User::where('id',$check_id)->value('email');
-    $assignedMail=$email;
+    $assignedMail=$email;  
     if($notes->user_id=$check_id){
         $collabaratorNotes=Notes::select("notes.id","notes.title","notes.body","notes.assignedTo","notes.createdBy")
-        ->leftJoin("collabarator","collabarator.collab_mails","=","notes.assignedTo")
+        ->leftJoin("collabarator","collabarator.collab_mails","=","notes.assignedTo")->distinct()
         ->where("notes.assignedTo","=","$assignedMail")
         ->get();
-    return response()->json(['notes'=>$Normal_notes,'collabarator'=>$collabaratorNotes]);
+        
+        $SharingMails=collabarator::select("collabarator.collab_mails")
+        ->leftJoin("notes","notes.id","=","collabarator.note_id")->distinct()->get();  
+        
+    return response()->json(['notes'=>$Normal_notes,'collabarator'=>$collabaratorNotes,'sharingEmails'=>$SharingMails]);
     }
    }
 }
