@@ -17,7 +17,7 @@ it's a feature of Google Keep by playing with that i am developing this collabar
 - can able to add multiple mails with single Note based on ID.
 - can able to remove the mails from the shared content.
 
-## Contributing
+## Owner
 - S.Sai Tarun
 
 
